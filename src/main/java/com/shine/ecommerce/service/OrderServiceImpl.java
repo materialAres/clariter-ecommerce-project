@@ -2,7 +2,9 @@ package com.shine.ecommerce.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.modelmapper.ModelMapper;
@@ -10,12 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import com.shine.ecommerce.dto.CustomerDto;
 import com.shine.ecommerce.dto.OrderDto;
+import com.shine.ecommerce.entity.Customer;
 import com.shine.ecommerce.entity.Order;
+import com.shine.ecommerce.entity.OrderProduct;
+import com.shine.ecommerce.entity.OrderProductKey;
 import com.shine.ecommerce.exceptions.EmptyOrderListException;
 import com.shine.ecommerce.exceptions.InvalidIdException;
 import com.shine.ecommerce.exceptions.OrderAlreadyExistsException;
 import com.shine.ecommerce.exceptions.OrderNotFoundException;
+import com.shine.ecommerce.repository.OrderProductRepository;
 import com.shine.ecommerce.repository.OrderRepository;
 
 import jakarta.validation.ConstraintViolation;
@@ -28,27 +35,43 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	OrderRepository orderRepository;
 	
+	private final OrderProductRepository orderProductRepository;
+	
 	@Autowired
 	ModelMapper modelMapper;
 	
 	@Autowired
 	private Validator validator;
+	
+	public OrderServiceImpl(OrderProductRepository orderProductRepository) {
+        this.orderProductRepository = orderProductRepository;
+    }
 
 	@Override
-	public Order addOrder(OrderDto orderDto) throws Exception {
-		Set<ConstraintViolation<OrderDto>> violations = validator.validate(orderDto);
+	public OrderDto addOrder(Customer customer, Set<OrderProduct> products) throws Exception {
+		for (OrderProduct orderProduct : products) {
+			System.out.println(">> " + orderProduct.getProduct());
+		}
 		
-	    if (!violations.isEmpty()) {
-	        throw new ConstraintViolationException(violations);
-	    }
-	    
-		Order order = Order.prepareOrderToSave(orderDto);
-		
-		order.setAmount(order.calculateAmount());
-		order.setCreatedAt(LocalDate.now());
+        Order order = new Order();
+        
+        order.setCustomer(customer);
+        order.setProducts(products);
+        
+        System.out.println(order.getId());
+        
+        order = orderRepository.save(modelMapper.map(order, Order.class));
 
-		return orderRepository.save(order);
+        for (OrderProduct product : products) {
+        	System.out.println(product.getProduct().getId());
+        	
+            product.setId(new OrderProductKey(order.getId(), product.getProduct().getId()));
+            orderProductRepository.save(product);
+        }
+        
+        return modelMapper.map(order, OrderDto.class);
 	}
+
 
 	@Override
 	public Collection<OrderDto> getOrders() throws EmptyOrderListException {

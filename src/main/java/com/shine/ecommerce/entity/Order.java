@@ -109,23 +109,5 @@ public class Order {
 	public void setCreatedAt(LocalDate createdAt) {
 		this.createdAt = createdAt;
 	}
-	
-	public static Order prepareOrderToSave(OrderDto orderDto) throws Exception {
-        Order returnOrder = new Order();
-        returnOrder.id = orderDto.getId();
-        // products
-        List<OrderProduct> productsModel = new ArrayList<OrderProduct>();
-        
-        for (ProductDto pDto : orderDto.getProducts()) {
-            Product p = new Product(pDto.getId(), pDto.getName(), pDto.getPrice(), pDto.getQty(), pDto.getImageUrl());
-            OrderProduct op = new OrderProduct(p, returnOrder, pDto.getQty());
-            productsModel.add(op);
-        }
-        returnOrder.products = new HashSet<OrderProduct>(productsModel);
-        // customer
-        returnOrder.customer = new Customer(orderDto.getCustomer().getId(), orderDto.getCustomer().getName(), orderDto.getCustomer().getSurname(), new HashSet<Order>());
-
-        return returnOrder;
-    }
 
 }

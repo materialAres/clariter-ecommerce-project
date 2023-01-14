@@ -2,6 +2,7 @@ package com.shine.ecommerce.controller;
 
 import java.util.Collection;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shine.ecommerce.dto.OrderDto;
+import com.shine.ecommerce.entity.Customer;
 import com.shine.ecommerce.service.OrderService;
 
 @RestController
@@ -24,12 +26,15 @@ public class OrderController {
 	@Autowired		
 	OrderService orderService;
 	
+	@Autowired
+	ModelMapper modelMapper;
+	
 	@PostMapping("/add")
 	public ResponseEntity<?> addOrder(@RequestBody OrderDto order) {
 		try {
 			return new ResponseEntity<OrderDto>(
 					new OrderDto(
-							orderService.addOrder(order),
+							orderService.addOrder(modelMapper.map(order.getCustomer(), Customer.class), order.getProducts()),
 							true
 							), 
 					HttpStatus.CREATED

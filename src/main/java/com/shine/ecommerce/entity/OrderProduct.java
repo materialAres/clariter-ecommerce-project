@@ -1,34 +1,36 @@
 package com.shine.ecommerce.entity;
 
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "order_product")
 public class OrderProduct {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @EmbeddedId
+    private OrderProductKey id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", insertable = false, updatable = false)
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", insertable = false, updatable = false)
     private Order order;
 
-    Integer qty;
+    private Integer qty;
     
     public OrderProduct() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public OrderProduct(Integer id, Product product, Order order, Integer qty) {
+	public OrderProduct(OrderProductKey id, Product product, Order order, Integer qty) {
 		super();
 		this.id = id;
 		this.product = product;
@@ -43,11 +45,11 @@ public class OrderProduct {
 		this.qty = qty;
 	}
 
-	public Integer getId() {
+	public OrderProductKey getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(OrderProductKey id) {
 		this.id = id;
 	}
 
