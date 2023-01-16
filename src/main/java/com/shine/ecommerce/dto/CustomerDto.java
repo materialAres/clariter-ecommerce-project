@@ -23,6 +23,7 @@ public class CustomerDto {
     @Size(max = 64, message = "Surname must be less than 64 characters")
 	private String surname;
     
+    @JsonIgnore
 	private Set<OrderDto> orders;
 	
 	public CustomerDto() {

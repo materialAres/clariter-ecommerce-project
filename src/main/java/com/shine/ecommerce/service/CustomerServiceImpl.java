@@ -1,8 +1,6 @@
 package com.shine.ecommerce.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,9 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import com.shine.ecommerce.dto.CustomerDto;
-import com.shine.ecommerce.dto.ProductDto;
 import com.shine.ecommerce.entity.Customer;
-import com.shine.ecommerce.entity.Product;
 import com.shine.ecommerce.exceptions.CustomerAlreadyExistsException;
 import com.shine.ecommerce.exceptions.CustomerNotFoundException;
 import com.shine.ecommerce.exceptions.EmptyCustomerListException;
@@ -52,13 +48,11 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public Collection<CustomerDto> getCustomers() throws EmptyCustomerListException {
-        List<CustomerDto> customerDtos = new ArrayList<>();
-        
-        for (Customer customer : customerRepository.findAll()) {
-        	customerDtos.add(new CustomerDto(customer, false));
-        }
-        
-		return customerDtos;
+		return customerRepository
+				.findAll()
+				.stream()
+				.map(customer -> modelMapper.map(customer, CustomerDto.class))
+				.collect(Collectors.toList());
 	}
 
 	@Override

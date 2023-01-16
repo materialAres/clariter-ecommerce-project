@@ -1,9 +1,11 @@
 package com.shine.ecommerce.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,6 @@ import com.shine.ecommerce.dto.OrderDto;
 import com.shine.ecommerce.entity.Order;
 import com.shine.ecommerce.exceptions.EmptyOrderListException;
 import com.shine.ecommerce.exceptions.InvalidIdException;
-import com.shine.ecommerce.exceptions.OrderAlreadyExistsException;
 import com.shine.ecommerce.exceptions.OrderNotFoundException;
 import com.shine.ecommerce.repository.OrderRepository;
 
@@ -51,22 +52,20 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Collection<OrderDto> getOrders() throws EmptyOrderListException {
-		if (ObjectUtils.isEmpty(orderRepository.findAll())) {
-			throw new EmptyOrderListException();
-		}
+	public SortedSet<OrderDto> getOrders() throws EmptyOrderListException {
+		Set<OrderDto> unsortedOrders = orderRepository
+				.findAll()
+				.stream()
+				.map(order -> modelMapper.map(order, OrderDto.class))
+				.collect(Collectors.toSet());
 		
-		Collection<OrderDto> orders = new ArrayList<>();
+		TreeSet<OrderDto> sortedOrders = new TreeSet<>(unsortedOrders);
 		
-		for (Order order : orderRepository.findAll()) {
-			orders.add(new OrderDto((Order) order, false));
-		}
-			
-		return orders;
+		return sortedOrders;
 	}
 	
 	@Override
-	public Collection<OrderDto> getOrdersByClientId(Integer id) throws InvalidIdException, EmptyOrderListException {
+	public Set<OrderDto> getOrdersByClientId(Integer id) throws InvalidIdException, EmptyOrderListException {
 		if (ObjectUtils.isEmpty(orderRepository.findAll())) {
 			throw new EmptyOrderListException();
 		}
@@ -75,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
 			throw new InvalidIdException();
 		}
 		
-		Collection<OrderDto> clientOrders = new ArrayList<>();
+		Set<OrderDto> clientOrders = new HashSet<>();
 		
 		for (Order order : orderRepository.findAll()) {
 			if (order.getCustomer().getId() == id) {

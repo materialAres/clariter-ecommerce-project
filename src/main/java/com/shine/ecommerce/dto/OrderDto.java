@@ -2,8 +2,8 @@ package com.shine.ecommerce.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.shine.ecommerce.entity.Order;
 import com.shine.ecommerce.entity.OrderProduct;
@@ -16,7 +16,7 @@ public class OrderDto {
 
 	private Integer id;
 	
-	private List<ProductDto> products;
+	private Set<ProductDto> products;
 	
 	@DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
 	private BigDecimal amount;
@@ -45,7 +45,7 @@ public class OrderDto {
 		this.createdAt = order.getCreatedAt();
 		
 		if (!lazy) {
-			products = new ArrayList<>();
+			products = new HashSet<>();
 			
 			for (OrderProduct orderProduct : order.getProducts()) {
 				products.add(new ProductDto(orderProduct.getProduct(), orderProduct.getQty()));
@@ -66,11 +66,11 @@ public class OrderDto {
 		this.id = id;
 	}
 
-	public List<ProductDto> getProducts() {
+	public Set<ProductDto> getProducts() {
 		return products;
 	}
 
-	public void setProducts(List<ProductDto> products) {
+	public void setProducts(Set<ProductDto> products) {
 		this.products = products;
 	}
 

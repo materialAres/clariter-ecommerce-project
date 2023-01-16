@@ -111,19 +111,32 @@ public class Order {
 	}
 	
 	public static Order prepareOrderToSave(OrderDto orderDto) throws Exception {
-        Order returnOrder = new Order();
+        Order returnOrder = new Order();	// The order we will save in the repository
         returnOrder.id = orderDto.getId();
         // products
         List<OrderProduct> productsModel = new ArrayList<OrderProduct>();
         
-        for (ProductDto pDto : orderDto.getProducts()) {
-            Product p = new Product(pDto.getId(), pDto.getName(), pDto.getPrice(), pDto.getQty(), pDto.getImageUrl());
-            OrderProduct op = new OrderProduct(p, returnOrder, pDto.getQty());
-            productsModel.add(op);
+        for (ProductDto productDto : orderDto.getProducts()) {
+            Product product = new Product(
+            		productDto.getId(), 
+            		productDto.getName(), 
+            		productDto.getPrice(), 
+            		productDto.getQty(), 
+            		productDto.getImageUrl()
+            		);
+            
+            // Create an orderproduct object to add to the productsModel list
+            OrderProduct orderProduct = new OrderProduct(product, returnOrder, productDto.getQty());
+            productsModel.add(orderProduct);
         }
         returnOrder.products = new HashSet<OrderProduct>(productsModel);
         // customer
-        returnOrder.customer = new Customer(orderDto.getCustomer().getId(), orderDto.getCustomer().getName(), orderDto.getCustomer().getSurname(), new HashSet<Order>());
+        returnOrder.customer = new Customer(
+        		orderDto.getCustomer().getId(), 
+        		orderDto.getCustomer().getName(), 
+        		orderDto.getCustomer().getSurname(), 
+        		new HashSet<Order>()
+        		);
 
         return returnOrder;
     }

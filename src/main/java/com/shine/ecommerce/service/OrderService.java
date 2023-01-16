@@ -1,6 +1,6 @@
 package com.shine.ecommerce.service;
 
-import java.util.Collection;
+import java.util.Set;
 
 import com.shine.ecommerce.dto.OrderDto;
 import com.shine.ecommerce.entity.Order;
@@ -12,9 +12,9 @@ public interface OrderService {
 
 	Order addOrder(OrderDto Order) throws Exception;
 	
-	Collection<OrderDto> getOrders() throws EmptyOrderListException;
+	Set<OrderDto> getOrders() throws EmptyOrderListException;
 	
-	Collection<OrderDto> getOrdersByClientId(Integer id) throws InvalidIdException, EmptyOrderListException;
+	Set<OrderDto> getOrdersByClientId(Integer id) throws InvalidIdException, EmptyOrderListException;
 
 	void deleteOrder(Order Order) throws EmptyOrderListException, OrderNotFoundException;
 	
