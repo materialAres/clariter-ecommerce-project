@@ -45,6 +45,7 @@ public class OrderController {
 		try {
 			return new ResponseEntity<Collection<OrderDto>>(orderService.getOrders(), HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

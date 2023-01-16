@@ -52,16 +52,12 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public SortedSet<OrderDto> getOrders() throws EmptyOrderListException {
-		Set<OrderDto> unsortedOrders = orderRepository
+	public Set<OrderDto> getOrders() throws EmptyOrderListException {
+		return orderRepository
 				.findAll()
 				.stream()
 				.map(order -> modelMapper.map(order, OrderDto.class))
 				.collect(Collectors.toSet());
-		
-		TreeSet<OrderDto> sortedOrders = new TreeSet<>(unsortedOrders);
-		
-		return sortedOrders;
 	}
 	
 	@Override

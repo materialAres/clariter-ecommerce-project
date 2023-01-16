@@ -29,14 +29,6 @@ public class ProductDto {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public ProductDto(Product product) {
-		this.id = product.getId();
-		this.name = product.getName();
-		this.price = product.getPrice();
-		this.qty = product.getQty();
-		this.setImageUrl(product.getImageUrl());
-	}
-	
 	public ProductDto(Product product, Integer qty) {
 		this.id = product.getId();
 		this.name = product.getName();
